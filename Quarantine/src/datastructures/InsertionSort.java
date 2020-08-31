@@ -1,9 +1,9 @@
-package quarantine;
+package datastructures;
 
 public class InsertionSort {
-
+	// o(n)
 	public static void main(String[] args) {
-		int[] dataArray = { 43, 6, 343, 445, 666, 43, 1, 0 };
+		int[] dataArray = { 5, 4, 3, 2, 1 };
 		doInsertionSort(dataArray);
 		for (int i = 0; i < dataArray.length; ++i) {
 			System.out.println(dataArray[i]);
