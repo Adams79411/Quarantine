@@ -4,10 +4,10 @@ import java.util.Arrays;
 
 public class Anagram {
 	public static void main(String[] args) {
-		String data1 = "StenyAdamsJ";
-		String data2 = "JsmadAynetS";
-		isAnagramByInbuiltFunctions(data1, data2);
-		customCode(data1, data2);
+		int a = 1;
+		int c = 0;
+		int b = a / c;
+		System.out.println(b);
 	}
 
 	private static void customCode(String data1, String data2) {
