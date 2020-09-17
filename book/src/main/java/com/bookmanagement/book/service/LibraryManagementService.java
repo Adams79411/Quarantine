@@ -1,5 +1,6 @@
 package com.bookmanagement.book.service;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -37,4 +38,6 @@ public interface LibraryManagementService {
 	public boolean saveUser(User user);
 
 	public boolean storeFile(MultipartFile file, int userId);
+
+	public boolean takeBook(Integer bookId) throws ParseException;
 }

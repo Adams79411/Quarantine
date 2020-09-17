@@ -1,7 +1,12 @@
 package com.bookmanagement.book.service;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +28,7 @@ import com.bookmanagement.book.repository.AuthorRepository;
 import com.bookmanagement.book.repository.BookRepository;
 import com.bookmanagement.book.repository.PublisherRepository;
 import com.bookmanagement.book.repository.UserRepository;
+import com.sun.el.parser.ParseException;
 
 /**
  * LibraryManagementServiceImpl class is used to provide the library management
@@ -200,5 +206,27 @@ public class LibraryManagementServiceImpl implements LibraryManagementService {
 			bookList.add(book);
 		}
 		return bookList;
+	}
+
+	@Override
+	public boolean takeBook(Integer bookId) throws java.text.ParseException {
+		Optional<Book> book = bookRepository.findById(bookId);
+		if (book.isPresent() && book.get().getUserId() == 0) {
+			Book bookDetail = book.get();
+			bookDetail.setUserId(2);
+			bookDetail.setUserName("Admin");
+			Date date = new Date();
+			String modifiedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			bookDetail.setBookLendDate(modifiedDate);
+			Calendar c = Calendar.getInstance();
+			c.setTime(sdf.parse(modifiedDate));
+			c.add(Calendar.DAY_OF_MONTH, 5);
+			String newDate = sdf.format(c.getTime());
+			bookDetail.setBookIssueLastDate(newDate);
+			bookRepository.save(bookDetail);
+			return false;
+		}
+		return true;
 	}
 }

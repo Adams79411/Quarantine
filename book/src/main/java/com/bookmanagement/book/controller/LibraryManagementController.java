@@ -1,5 +1,6 @@
 package com.bookmanagement.book.controller;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,5 +97,11 @@ public class LibraryManagementController {
 	public List<Book> search(@PathVariable Integer criteria, @PathVariable String search) {
 		List<Book> dataList = libraryManagementService.getSearchDetails(search, criteria);
 		return dataList;
+	}
+
+	@GetMapping("/takeBook/{bookId}")
+	@CrossOrigin(origins = "http://localhost:4200")
+	public boolean takeBook(@PathVariable Integer bookId) throws ParseException {
+		return libraryManagementService.takeBook(bookId);
 	}
 }
