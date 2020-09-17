@@ -17,7 +17,7 @@ import com.library.librarymanagement.repository.LibraryRepository;
 public class LibraryController {
 
 	@Autowired
-	private LibraryRepository libraryRepository;
+	public LibraryRepository libraryRepository;
 
 	@GetMapping("/library")
 	public String library(@RequestParam(name = "name", required = false, defaultValue = "World") String name,
