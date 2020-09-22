@@ -5,11 +5,12 @@ package adddevices;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import entity.Connection;
 import entity.Device;
+import enumeration.DeviceInformations;
 
 /**
  * RouteDetection class is used to print the route at which the specified
@@ -26,51 +27,59 @@ public class RouteDetection {
 	 * @param deviceList
 	 * @param connectionList
 	 * @param commandLineArray
-	 * @param repeatedListForComputers
-	 * @param repeatedListForRepeaters
-	 * @param alreadyExistedConnectionMap
 	 */
-	public void getRoute(List<Device> deviceList, List<Connection> connectionList, String[] commandLineArray,
-			List<String> repeatedListForComputers, List<String> repeatedListForRepeaters,
-			Map<String, List<String>> alreadyExistedConnectionMap) {
-		int CONSTANT_ONE = 1;
-		int CONSTANT_TWO = 2;
-		if (connectionList.size() > CONSTANT_ONE) {
-			List<String> sourceIdList = new ArrayList<>();
-			List<String> destinationIdList = new ArrayList<>();
-			connectionList.stream().forEach(connection -> {
-				sourceIdList.add(connection.getSourceDevice());
-				destinationIdList.add(connection.getDestinationDevice());
-			});
-			if (commandLineArray.length == CONSTANT_ONE || commandLineArray.length == CONSTANT_TWO) {
-				System.out.println("Error: Invalid command syntax.");
-			} else if (repeatedListForRepeaters.size() > CONSTANT_ONE
-					&& repeatedListForRepeaters.contains(commandLineArray[CONSTANT_ONE])
-					|| repeatedListForRepeaters.contains(commandLineArray[CONSTANT_TWO])) {
-				System.out.println("Error: Route cannot be calculated with a repeater.");
-			} else if (repeatedListForComputers.size() > CONSTANT_ONE
-					&& (!repeatedListForComputers.contains(commandLineArray[CONSTANT_ONE])
-							|| !repeatedListForComputers.contains(commandLineArray[CONSTANT_TWO]))) {
-				System.out.println("Error: Node not found");
-			} else if (repeatedListForRepeaters.size() > CONSTANT_ONE
-					&& (!repeatedListForRepeaters.contains(commandLineArray[CONSTANT_ONE])
-							|| !repeatedListForRepeaters.contains(commandLineArray[CONSTANT_TWO]))) {
-				System.out.println("Error: Node not found");
-			} else if (!destinationIdList.contains(commandLineArray[CONSTANT_TWO])
-					&& !sourceIdList.contains(commandLineArray[CONSTANT_ONE])) {
-				System.out.println("Error: Route not found!");
-			} else {
-				if (alreadyExistedConnectionMap.size() != 0) {
-					alreadyExistedConnectionMap.entrySet().stream().forEach(data -> {
-						List<String> dataList = data.getValue();
-						dataList.stream().forEach(list -> {
-							System.out.println(list);
-						});
-					});
-				}
-			}
-		} else {
-			System.out.println("Error: Node not found");
+	public void getRoute(List<Device> deviceList, List<Connection> connectionList, String[] commandLineArray) {
+		if (commandLineArray.length == 1 || commandLineArray.length == 2) {
+			System.out.println("Error: Invalid command syntax.");
+			return;
 		}
+		Device device = deviceList.stream().filter(data -> commandLineArray[1].equals(data.getDeviceId())).findAny()
+				.orElse(null);
+		Device secondaryDevice = deviceList.stream().filter(data -> commandLineArray[2].equals(data.getDeviceId()))
+				.findAny().orElse(null);
+		if (connectionList.size() > 1 || Objects.isNull(device) || Objects.isNull(secondaryDevice)) {
+			System.out.println("Error: Node not found");
+			return;
+		}
+		if (DeviceInformations.REPEATER.name().equals(device.getDeviceName())
+				&& DeviceInformations.REPEATER.name().equals(secondaryDevice.getDeviceName())) {
+			System.out.println("Error: Route cannot be calculated with a repeater.");
+			return;
+		}
+		List<Connection> connection = connectionList.stream().filter(data -> {
+			return (!commandLineArray[1].equals(data.getSourceDevice())
+					&& !commandLineArray[2].equals(data.getDestinationDevice()));
+		}).collect(Collectors.toList());
+		if (connection.size() < 1) {
+			System.out.println("Error: Route not found!");
+			return;
+		}
+		findConnection(connectionList, commandLineArray[1], commandLineArray[2]);
+	}
+
+	/**
+	 * prints the route
+	 * 
+	 * @param connectionList
+	 * @param source
+	 * @param destination
+	 */
+	private void findConnection(List<Connection> connectionList, String source, String destination) {
+		System.out.println(source + "->");
+		List<String> dupRouteList = new ArrayList<>();
+		dupRouteList.add(source);
+		dupRouteList.add(destination);
+		connectionList.stream().filter(data -> {
+			return (source.equals(data.getSourceDevice()) && destination.equals(data.getDestinationDevice())
+					&& source.equals(data.getDestinationDevice()) && destination.equals(data.getSourceDevice()));
+		}).forEach(predicate -> {
+			if (!dupRouteList.contains(predicate.getSourceDevice())
+					&& !dupRouteList.contains(predicate.getDestinationDevice())) {
+				System.out.println(predicate.getSourceDevice() + "->" + predicate.getDestinationDevice());
+				dupRouteList.add(predicate.getSourceDevice());
+				dupRouteList.add(predicate.getDestinationDevice());
+			}
+		});
+		System.out.println(destination);
 	}
 }

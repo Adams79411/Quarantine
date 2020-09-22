@@ -4,6 +4,7 @@
 package adddevices;
 
 import java.util.List;
+import java.util.Objects;
 
 import entity.Device;
 import enumeration.DeviceInformations;
@@ -22,36 +23,24 @@ public class AddDevicetoNetwork {
 	 * 
 	 * @param deviceList
 	 * @param commandLineArray
-	 * @param repeatedListForRepeaters
-	 * @param repeatedListForComputers
 	 */
-	public void registerData(List<Device> deviceList, String[] commandLineArray, List<String> repeatedListForComputers,
-			List<String> repeatedListForRepeaters) {
-		int CONSTANT_ONE = 1;
-		int CONSTANT_TWO = 2;
-		int DEFAULT_STRENGTH = 5;
-		if (commandLineArray.length == CONSTANT_ONE) {
+	public void registerData(List<Device> deviceList, String[] commandLineArray) {
+		if (commandLineArray.length == 1 && !commandLineArray[1].equals(DeviceInformations.COMPUTER.name())
+				|| !commandLineArray[1].equals(DeviceInformations.REPEATER.name())) {
 			System.out.println("Error: Invalid command syntax.");
-		} else if (commandLineArray[CONSTANT_ONE].equals(DeviceInformations.COMPUTER.name())
-				|| commandLineArray[CONSTANT_ONE].equals(DeviceInformations.REPEATER.name())) {
-			if (repeatedListForComputers.contains(commandLineArray[CONSTANT_TWO])
-					|| repeatedListForRepeaters.contains(commandLineArray[CONSTANT_TWO])) {
-				System.out.println("Error: That name already exists.");
-			} else {
-				if (commandLineArray[CONSTANT_ONE].equals(DeviceInformations.COMPUTER.name())) {
-					repeatedListForComputers.add(commandLineArray[CONSTANT_TWO]);
-				} else {
-					repeatedListForRepeaters.add(commandLineArray[CONSTANT_TWO]);
-				}
-				Device device = new Device();
-				device.setDeviceId(commandLineArray[CONSTANT_ONE]);
-				device.setDeviceName(commandLineArray[CONSTANT_TWO]);
-				device.setDeviceStrength(DEFAULT_STRENGTH);
-				deviceList.add(device);
-				System.out.println("Successfully added " + commandLineArray[CONSTANT_TWO]);
-			}
+			return;
+		}
+		Device device = deviceList.stream().filter(data -> commandLineArray[2].equals(data.getDeviceId())).findAny()
+				.orElse(null);
+		if (Objects.nonNull(device)) {
+			System.out.println("Error: That name already exists.");
 		} else {
-			System.out.println("Error: Invalid command syntax.");
+			Device insertDevice = new Device();
+			insertDevice.setDeviceId(commandLineArray[2]);
+			insertDevice.setDeviceName(commandLineArray[1]);
+			insertDevice.setDeviceStrength(5);
+			deviceList.add(insertDevice);
+			System.out.println("Successfully added " + commandLineArray[2]);
 		}
 	}
 }

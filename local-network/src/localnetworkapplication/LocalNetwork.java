@@ -4,9 +4,7 @@
 package localnetworkapplication;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 import adddevices.AddDeviceStrength;
@@ -30,35 +28,28 @@ public class LocalNetwork {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		int CONSTANT_ZERO = 0;
 		Scanner dataScanner = new Scanner(System.in);
 		List<Device> deviceList = new ArrayList<>();
 		List<Connection> connectionList = new ArrayList<>();
-		List<String> repeatedListForComputers = new ArrayList<>();
-		List<String> repeatedListForRepeaters = new ArrayList<>();
-		Map<String, List<String>> alreadyExistedConnectionMap = new HashMap<>();
 		String commandLine;
 		while ((commandLine = dataScanner.nextLine()).equals("END") == false) {
 			String[] commandLineArray = new String[20];
 			commandLineArray = commandLine.split(" ", commandLine.length());
-			if (commandLineArray[CONSTANT_ZERO].equals(LocalNetworkCommands.ADD.name())) {
+			if (commandLineArray[0].equals(LocalNetworkCommands.ADD.name())) {
 				AddDevicetoNetwork addDevice = new AddDevicetoNetwork();
-				addDevice.registerData(deviceList, commandLineArray, repeatedListForComputers,
-						repeatedListForRepeaters);
+				addDevice.registerData(deviceList, commandLineArray);
 			}
-			if (commandLineArray[CONSTANT_ZERO].equals(LocalNetworkCommands.SET_DEVICE_STRENGTH.name())) {
+			if (commandLineArray[0].equals(LocalNetworkCommands.SET_DEVICE_STRENGTH.name())) {
 				AddDeviceStrength addStrength = new AddDeviceStrength();
-				addStrength.registerDeviceStrength(deviceList, commandLineArray, repeatedListForComputers);
+				addStrength.registerDeviceStrength(deviceList, commandLineArray);
 			}
-			if (commandLineArray[CONSTANT_ZERO].equals(LocalNetworkCommands.CONNECT.name())) {
+			if (commandLineArray[0].equals(LocalNetworkCommands.CONNECT.name())) {
 				ConnectDevice connectDevice = new ConnectDevice();
-				connectDevice.connectDevice(deviceList, connectionList, commandLineArray, repeatedListForComputers,
-						repeatedListForRepeaters, alreadyExistedConnectionMap);
+				connectDevice.connectDevice(deviceList, connectionList, commandLineArray);
 			}
-			if (commandLineArray[CONSTANT_ZERO].equals(LocalNetworkCommands.INFO_ROUTE.name())) {
+			if (commandLineArray[0].equals(LocalNetworkCommands.INFO_ROUTE.name())) {
 				RouteDetection route = new RouteDetection();
-				route.getRoute(deviceList, connectionList, commandLineArray, repeatedListForComputers,
-						repeatedListForRepeaters, alreadyExistedConnectionMap);
+				route.getRoute(deviceList, connectionList, commandLineArray);
 			}
 		}
 	}
